@@ -1,6 +1,7 @@
+const back = "https://backtaskmanager.onrender.com"
 const newTask = async (data)=>{
     try {
-        const response = await fetch("http://localhost:4000/new-task", {
+        const response = await fetch(`${back}/new-task`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -16,7 +17,7 @@ const newTask = async (data)=>{
 
 const readTask = async (idUser)=>{
     try {
-        const response = await fetch("http://localhost:4000/get-Task", {
+        const response = await fetch(`${back}/get-Task`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -33,7 +34,7 @@ const readTask = async (idUser)=>{
 const updateTask = async (update)=>{
     console.log(update)
     try {
-        const response = await fetch("http://localhost:4000/update-task",{
+        const response = await fetch(`${back}/update-task`,{
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"

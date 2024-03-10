@@ -1,8 +1,9 @@
+const back = "https://backtaskmanager.onrender.com"
 const singup = async (data) => {
     console.log(data)
     try {
         console.log("No, entre aca")
-        const response = await fetch("http://localhost:4000/singup", {
+        const response = await fetch(`${back}/singup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -22,7 +23,7 @@ const login = async (data)=>{
     console.log(data)
     try {
         console.log("No, entre aca")
-        const response = await fetch("http://localhost:4000/login", {
+        const response = await fetch(`${back}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -40,7 +41,7 @@ const login = async (data)=>{
 const infoUser = async (token)=>{
     try {
         console.log("No, entre aca")
-        const response = await fetch("http://localhost:4000/infoUser", {
+        const response = await fetch(`${back}/infoUser`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
