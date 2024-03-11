@@ -1,10 +1,11 @@
-import { Navigate, createBrowserRouter} from "react-router-dom"
+import { createBrowserRouter} from "react-router-dom"
 import Login from './Pages/Login'
 import SingUp from "./Pages/SingUp"
 import Home from "./Pages/Home"
 import Dashboard from "./Pages/Dashboard"
 import Task from "./Layout/Task"
 import NewTask from "./Layout/NewTask"
+import Profile from "./Layout/Profile"
 
 const router = createBrowserRouter([
 	{
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
 				path: "/dashboard",
 				Component: Task,
 			},
+			{
+				path: "/dashboard/profile",
+				Component: Profile
+			}
 		]
 	},
 	{

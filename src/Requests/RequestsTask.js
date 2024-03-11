@@ -1,4 +1,4 @@
-const back = "https://backtaskmanager.onrender.com"
+import back from "./url_back"
 const newTask = async (data)=>{
     try {
         const response = await fetch(`${back}/new-task`, {
@@ -39,7 +39,7 @@ const updateTask = async (update)=>{
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({update})
+            body: JSON.stringify(update)
         })
         return response
     } catch (error) {

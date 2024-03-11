@@ -1,13 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { newTask } from '../Requests/RequestsTask'
 import { infoUser } from '../Requests/RequestsUser'
+import { createTag, readTag } from '../Requests/RequestsTag'
 
 function NewTask({ display }) {
 
   const [disableDate, setDisableDate] = useState("pointer-events-none opacity-50")
-  const [disableTag, setDisableTag] = useState("pointer-events-none opacity-50")
-  const [tag, setTag] = useState([])
+  const [disableSelTag, setDisableSelTag] = useState("pointer-events-none opacity-50")
+  const [disableAddTag, setDisableAddTag] = useState("pointer-events-none opacity-50 flex")
+  const [tag, setTag] = useState({})
+  const [tags, setTags] = useState([])
+
+  useEffect(() => {
+    infoUser(localStorage.getItem("token"))
+      .then(res => res.json())
+      .then(dataUser => {
+        readTag({ userId: dataUser.user.id })
+          .then(res => res.json())
+          .then(dataTask => {
+            setTags(dataTask.tag)
+          })
+          .catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
+  }, [])
 
   const {
     register,
@@ -27,7 +44,7 @@ function NewTask({ display }) {
   })
 
   const handleTask = (data) => {
-    if (display === "") {
+    if (disableDate === "") {
       setValue('dateEnd', new Date(data.dateEnd).toISOString())
       if (new Date(data.dateEnd).getTime() < new Date().getTime()) {
         alert("La fecha no puede ser menor a la del dia de hoy")
@@ -37,12 +54,25 @@ function NewTask({ display }) {
           .then(dataUser => {
             if (dataUser.message === "OK") {
               console.log(dataUser)
-              setValue('id', dataUser.user.id)
-              newTask(data)
-                .then(res => res.json())
-                .then(dataTask => console.log(dataTask))
-                .catch(err => console.log(err))
-
+              data.id = dataUser.user.id
+              if (tag.id) {
+                data.tagId = tag.id
+                newTask(data)
+                  .then(res => res.json())
+                  .then(dataTask => console.log(dataTask))
+                  .catch(err => console.log(err))
+              } else {
+                createTag({ userId: dataUser.user.id, name: tag.name })
+                  .then(res => res.json())
+                  .then(dataTag => {
+                    data.tagId = dataTag.tag.id
+                    newTask(data)
+                      .then(res => res.json())
+                      .then(dataTask => console.log(dataTask))
+                      .catch(err => console.log(err))
+                  })
+                  .catch(err => console.log(err))
+              }
             } else {
               console.log(dataUser)
               alert(dataUser.message)
@@ -56,10 +86,24 @@ function NewTask({ display }) {
         .then(dataUser => {
           if (dataUser.message === "OK") {
             data.id = dataUser.user.id
-            newTask(data)
-              .then(res => res.json())
-              .then(dataTask => console.log(dataTask))
-              .catch(err => console.log(err))
+            if (tag.id) {
+              data.tagId = tag.id
+              newTask(data)
+                .then(res => res.json())
+                .then(dataTask => console.log(dataTask))
+                .catch(err => console.log(err))
+            } else {
+              createTag({ userId: dataUser.user.id, name: tag.name })
+                .then(res => res.json())
+                .then(dataTag => {
+                  data.tagId = dataTag.tag.id
+                  newTask(data)
+                    .then(res => res.json())
+                    .then(dataTask => console.log(dataTask))
+                    .catch(err => console.log(err))
+                })
+                .catch(err => console.log(err))
+            }
 
           } else {
             console.log(dataUser)
@@ -81,28 +125,40 @@ function NewTask({ display }) {
     }
   }
 
-  const handleKey = (event) => {
-    if (event.key === "Enter") {
-      const value = event.target.value
-      setTag((prev) => [...prev, value])
-      event.target.value = ""
-    }
-  }
-
-  const handleDeleteTag = (event) => {
-    const container = event.target.parentElement.parentElement
-    const parent = event.target.parentElement
-    const index = Number(event.target.parentElement.getAttribute("data-id"))
-    tag.splice(index, 1)
-    container.removeChild(parent)
-  }
-
-  const handleTag = (event)=>{
+  const handleSelTag = (event) => {
     if (event.target.checked) {
-      setDisableTag("")
+      setTag({})
+      setDisableSelTag("")
     } else {
-      setDisableTag("pointer-events-none opacity-50")
+      setTag({})
+      setDisableSelTag("pointer-events-none opacity-50")
     }
+  }
+
+  const handleAddTag = (event) => {
+    if (event.target.checked) {
+      setTag({})
+      setDisableAddTag("flex")
+    } else {
+      setTag({})
+      setDisableAddTag("pointer-events-none opacity-50")
+    }
+  }
+
+  const handleTag = (event) => {
+
+    if (event.target.tagName === "SELECT") {
+      const option = event.target.options[event.target.selectedIndex]
+      if (option.id !== "option-sel") {
+        setTag({ id: option.id })
+      }
+    } else {
+      setTag({
+        ...tag,
+        [event.target.id]: event.target.value
+      })
+    }
+    console.log()
   }
   return (
     <>
@@ -134,25 +190,31 @@ function NewTask({ display }) {
                   <input type='datetime-local' {...register('dateEnd')}></input>
                 </div>
               </div>
-              <div>
+              <div className='flex flex-col gap-5'>
                 <div>
-                  <input type='checkbox' onChange={handleTag}></input>
-                  <label>Añadir Categorias</label>
-                </div>
-                <div className={`flex flex-col gap-1 ${disableTag}`}>
-                  <div className='flex items-center gap-2'>
-                    <label>Categoria</label>
-                    <input type='text' className='border-b border-black outline-none px-1' onKeyDown={handleKey}></input>
-                  </div>
                   <div>
-                    <p className='text-xs'>Precione &quot;Enter&quot; para agregar otra Categoria </p>
+                    <input type='checkbox' onChange={handleSelTag}></input>
+                    <label>Seleccionar Categoria</label>
                   </div>
-                  <div className='w-full h-20 overflow-hidden overflow-y-scroll p-2 flex flex-wrap gap-2 border border-black mt-3 rounded-lg'>
-                    {
-                      tag.map((elemen, index) => {
-                        return (<p data-id={index} key={index} className='text-sm px-1 h-6 bg-blue-200 border border-blue-800 rounded-lg'>{elemen} <button type='button' onClick={handleDeleteTag} className='rounded-full text-xs h-5 w-5'>X</button></p>)
-                      })
-                    }
+                  <div className={`${disableSelTag}`}>
+                    <select onChange={handleTag}>
+                      <option id='option-sel' selected>Seleccione La Categoria</option>
+                      {
+                        tags.map((element,index) =>{
+                          return(<option key={index} id={`${element.id}`}>{element.nameTag}</option>)
+                        })
+                      }
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <input type='checkbox' onChange={handleAddTag}></input>
+                    <label>Añadir Categoria</label>
+                  </div>
+                  <div className={`${disableAddTag}`}>
+                    <label>Categoria</label>
+                    <input type='text' id='name' className='border-b border-black outline-none px-1' onChange={handleTag}></input>
                   </div>
                 </div>
               </div>
