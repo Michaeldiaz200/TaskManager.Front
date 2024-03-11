@@ -1,10 +1,17 @@
 import { useForm } from "react-hook-form"
 import { login } from "../Requests/RequestsUser"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 function Login() {
 
     const navigate = useNavigate()
+    const token = localStorage.getItem("token")
+    useEffect(()=>{
+        if(token){
+            navigate("/dashboard")
+        }
+    })
     const {
         register,
         handleSubmit,

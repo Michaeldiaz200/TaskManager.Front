@@ -2,9 +2,16 @@ import { useForm } from "react-hook-form"
 import { singup } from "../Requests/RequestsUser"
 import validator from "validator"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 function SingUp() {
     const navigate = useNavigate()
+    const token = localStorage.getItem("token")
+    useEffect(()=>{
+        if(token){
+            navigate("/dashboard")
+        }
+    })
     const {
         register,
         handleSubmit,
