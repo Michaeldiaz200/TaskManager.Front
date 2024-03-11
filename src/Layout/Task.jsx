@@ -4,6 +4,7 @@ import { readTask, updateTask } from '../Requests/RequestsTask'
 import { infoUser } from '../Requests/RequestsUser'
 import { differenceInDays, differenceInHours } from 'date-fns';
 import { readTag } from '../Requests/RequestsTag';
+import { useNavigate } from 'react-router-dom';
 
 function Task() {
     const [validateNewTask, setValidateNewTask] = useState(false)
@@ -15,6 +16,7 @@ function Task() {
     const [taskPendiente, setTaskPendiente] = useState([])
     const [taskEnProgreso, setTaskEnProgreso] = useState([])
     const [taskCompleta, setTaskCompleta] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         infoUser(localStorage.getItem("token"))
@@ -96,7 +98,7 @@ function Task() {
     const handleDisplay = (disp) => {
         setValidateNewTask(disp)
         document.body.style.overflow = "auto"
-        window.location.reload()
+        navigate("/dashboard")
     }
     const handleNewTask = () => {
         setValidateNewTask(true)
