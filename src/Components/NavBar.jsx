@@ -45,7 +45,10 @@ function NavBar() {
                         <div className="fixed content-between w-1/5 h-96  top-14 right-0 border border-black bg-white">
                             <div className="h-full flex flex-col content-between justify-between">
                                 <div className="flex justify-center">
-                                    <button>Perfil</button>
+                                    <button onClick={()=>{navigate("/dashboard/profile")}}>Perfil</button>
+                                </div>
+                                <div>
+                                    <button onClick={()=>{navigate("/dashboard")}}>Dashboard</button>
                                 </div>
                                 <div className="flex justify-center">
                                     <button onClick={handleCerrarSesion}>Cerrar Sesion</button>
