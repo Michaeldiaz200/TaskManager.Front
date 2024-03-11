@@ -6,15 +6,15 @@ function NavBar() {
     const [disable, setDisable] = useState(false)
     const token = localStorage.getItem("token")
 
-    const handleDisable = ()=>{
-        if(disable){
+    const handleDisable = () => {
+        if (disable) {
             setDisable(false)
-        }else{
+        } else {
             setDisable(true)
         }
     }
 
-    const handleCerrarSesion = ()=>{
+    const handleCerrarSesion = () => {
         localStorage.clear()
         navigate("/login")
     }
@@ -44,11 +44,13 @@ function NavBar() {
                     disable ? (<>
                         <div className="fixed content-between w-1/5 h-96  top-14 right-0 border border-black bg-white">
                             <div className="h-full flex flex-col content-between justify-between">
-                                <div className="flex justify-center">
-                                    <button onClick={()=>{navigate("/dashboard/profile")}}>Perfil</button>
-                                </div>
-                                <div>
-                                    <button onClick={()=>{navigate("/dashboard")}}>Dashboard</button>
+                                <div className="w-full flex flex-col gap-5 justify-center items-center">
+                                    <div className="flex justify-center">
+                                        <button onClick={() => { navigate("/dashboard/profile") }}>Perfil</button>
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <button onClick={() => { navigate("/dashboard") }}>Dashboard</button>
+                                    </div>
                                 </div>
                                 <div className="flex justify-center">
                                     <button onClick={handleCerrarSesion}>Cerrar Sesion</button>
