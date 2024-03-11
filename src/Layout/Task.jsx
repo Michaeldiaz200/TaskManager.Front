@@ -98,7 +98,7 @@ function Task() {
     const handleDisplay = (disp) => {
         setValidateNewTask(disp)
         document.body.style.overflow = "auto"
-        navigate("/dashboard")
+        window.location.reload()
     }
     const handleNewTask = () => {
         setValidateNewTask(true)
